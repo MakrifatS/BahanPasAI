@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { Sparkles, Loader2, Send, Copy, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,11 @@ export default function ReorderWA() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [waText, setWaText] = useState("");
+
+  useEffect(() => {
+    if (state.waDraft && !waText) setWaText(state.waDraft);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.waDraft]);
 
   const buildWaText = (orders) => {
     const sup = state.suppliers[0];
@@ -66,6 +71,22 @@ export default function ReorderWA() {
         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}
         {loading ? "Menganalisis..." : "Jalankan Analisis AI"}
       </Button>
+
+      {!result && state.waDraft && (
+        <div className="rounded-2xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 p-6 fade-up" data-testid="demo-wa-draft">
+          <div className="flex items-center gap-2 mb-1"><Send className="h-5 w-5 text-emerald-500" /><h3 className="text-lg font-bold">Draft WhatsApp dari Quick Demo</h3></div>
+          <p className="text-sm text-muted-foreground mb-4">Rekomendasi restock otomatis ke {state.suppliers[0]?.name}. Edit bila perlu.</p>
+          <Textarea value={waText} onChange={(e) => setWaText(e.target.value)} rows={9} data-testid="demo-wa-text" className="font-mono text-sm bg-white dark:bg-[#131C2E]" />
+          <div className="mt-4 flex gap-2">
+            <Button onClick={sendWa} data-testid="demo-send-wa-btn" className="gap-2 bg-emerald-500 hover:bg-emerald-600 text-white">
+              <Send className="h-4 w-4" /> Kirim via WhatsApp
+            </Button>
+            <Button onClick={copyText} variant="outline" data-testid="demo-copy-wa-btn" className="gap-2">
+              <Copy className="h-4 w-4" /> Salin Teks
+            </Button>
+          </div>
+        </div>
+      )}
 
       {result && (
         <div className="grid lg:grid-cols-2 gap-6 fade-up">

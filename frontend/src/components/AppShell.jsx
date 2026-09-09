@@ -11,7 +11,6 @@ import { Brand } from "@/components/Brand";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { PitchDeckModal } from "@/components/PitchDeckModal";
 import { useApp } from "@/context/AppContext";
-import { useQuickDemo } from "@/hooks/useQuickDemo";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,8 +22,7 @@ const NAV = [
 export default function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { resetDemo } = useApp();
-  const { run, running } = useQuickDemo();
+  const { resetDemo, runQuickDemo, demoStatus } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const logout = () => {
@@ -40,7 +38,7 @@ export default function AppShell() {
 
   const runDemo = () => {
     navigate("/dashboard");
-    run();
+    runQuickDemo();
   };
 
   return (
@@ -65,9 +63,9 @@ export default function AppShell() {
             </nav>
 
             <div className="flex items-center gap-2">
-              <Button onClick={runDemo} disabled={running} size="sm" data-testid="quick-demo-btn"
+              <Button onClick={runDemo} disabled={!!demoStatus} size="sm" data-testid="quick-demo-btn"
                 className="hidden sm:flex gap-2 bg-amber-500 hover:bg-amber-600 text-white shadow-sm">
-                <Zap className="h-4 w-4" /> {running ? "Berjalan..." : "Quick Demo"}
+                <Zap className="h-4 w-4" /> {demoStatus ? "Berjalan..." : "Quick Demo"}
               </Button>
               <div className="hidden md:block"><PitchDeckModal /></div>
               <AlertDialog>
@@ -126,6 +124,25 @@ export default function AppShell() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {demoStatus && (
+          <div data-testid="demo-progress-banner"
+            className="mb-6 rounded-2xl border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-4 fade-up">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
+                </span>
+                <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">Quick Demo berjalan{demoStatus.step > 0 ? ` · Langkah ${demoStatus.step}/${demoStatus.total}` : ""}</p>
+              </div>
+              <span className="font-mono text-sm font-bold text-amber-600 dark:text-amber-400">{demoStatus.pct}%</span>
+            </div>
+            <p className="text-sm text-amber-700 dark:text-amber-300 mb-2">{demoStatus.message}</p>
+            <div className="h-2 rounded-full bg-amber-200 dark:bg-amber-900 overflow-hidden">
+              <div className="h-full bg-amber-500 rounded-full transition-all duration-700 ease-out" style={{ width: `${demoStatus.pct}%` }} />
+            </div>
+          </div>
+        )}
         <Outlet />
       </main>
     </div>

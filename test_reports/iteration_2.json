@@ -1,0 +1,26 @@
+{
+  "summary": "Frontend-only re-test of BahanPas AI Quick Demo Mode bug fix. All 5 requested scenarios verified end-to-end via Playwright against the public preview URL: (1) Quick Demo shows live progress banner with steps 1/6→6/6 and percentages 6%→28%→46%→64%→80%→93%→100% over ~10s, then banner disappears and button re-enables ~12s. (2) Toasts fire in sequence (start, 12 Kopi Susu Aren, 7 Vanilla Latte, susu tumpah, HPP +25%, WA draft, selesai). (3) Dashboard state actually mutates: sales=2, audit=1 (spill), Biji Kopi Arabika priceDisplay 150000→187500 (exactly 1.25x). (4) WA draft persists to state.waDraft and renders on /order via demo-wa-draft with pre-filled demo-wa-text and copy/send buttons. (5) Reset Data returns to fresh seed (5 batches, 0 sales, 0 audit, no waDraft, kopi price back to 150000). (6) Re-running Quick Demo after reset works from a fresh state with button disabled while running.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Dashboard charts", "issues": ["Recharts ResponsiveContainer emits width(-1)/height(-1) warnings on initial mount (cosmetic console warnings, no visual break)."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "AppContext.runQuickDemo uses setState(buildSeed()) then schedules setTimeouts that call recordSale/deductStock which each call setState — this relies on React state being flushed before timers fire (works because timers are 1.4s+ apart, safe here).",
+    "demoTimers cleanup effect only runs on unmount; resetDemo correctly clears timers if user resets mid-demo. Good.",
+    "Optional: expose demoStatus.step===0 initial state, or show percentage-only banner during setup — currently first render shows 6% + Langkah 0/6 which is fine but 'Langkah 0/6' is unusual copy."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "test_credentials": "Bypass button on /login (data-testid=bypass-login-btn); or admin@bahanpas.ai / bahanpas321",
+  "seed_data_creation": "None; test cleared localStorage before run to guarantee fresh seed.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Quick Demo flow (AppContext.runQuickDemo + AppShell demo-progress-banner + ReorderWA demo-wa-draft) fully verified. Timers 1.4/3.2/5.0/6.8/8.6/10.2/12.2s work as designed. Biji Kopi Arabika price hike is real (1.25x). state.waDraft persists in localStorage key bahanpas_state_v1. If future tests need to clear demo state, click reset-data-btn → reset-confirm.",
+  "rca of the issue": "N/A — previous bug (invisible mutations, fake HPP alert) is fixed. Verified real price hike changes state.inventory and drives Dashboard KPIs/Simulator, and waDraft persists across routes."
+}
