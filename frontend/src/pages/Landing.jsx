@@ -11,11 +11,11 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { PitchDeckModal } from "@/components/PitchDeckModal";
 
 const FEATURES = [
-  { icon: Mic, title: "Voice-to-Stock Dapur", desc: "Ngomong ke HP, AI langsung catat bahan masuk, keluar, & tumpah jadi data rapi.", color: "text-emerald-500", span: "md:col-span-2" },
-  { icon: Calculator, title: "AI Margin & Price Simulator", desc: "Geser slider kenaikan harga bahan, margin tiap menu langsung terhitung ulang.", color: "text-amber-500", span: "" },
-  { icon: ScanLine, title: "Scan Nota AI", desc: "Foto nota supplier, AI ekstrak item & harga otomatis.", color: "text-sky-500", span: "" },
-  { icon: Layers, title: "FIFO Batch Tracking", desc: "Tahu persis batch mana harus dipakai duluan sebelum kedaluwarsa.", color: "text-rose-500", span: "" },
-  { icon: ClipboardCheck, title: "Quick Stock Take & Waste Audit", desc: "Opname kilat, hitung selisih otomatis dalam unit & Rupiah.", color: "text-violet-500", span: "md:col-span-2" },
+  { icon: Mic, title: "Voice-to-Stock Dapur", desc: "Ngomong ke HP, AI langsung catat bahan masuk, keluar, & tumpah jadi data rapi.", color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-950/50", span: "md:col-span-2" },
+  { icon: Calculator, title: "AI Margin & Price Simulator", desc: "Geser slider kenaikan harga bahan, margin tiap menu langsung terhitung ulang.", color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/50", span: "md:col-span-2" },
+  { icon: ScanLine, title: "Scan Nota AI", desc: "Foto nota supplier, AI ekstrak item & harga otomatis.", color: "text-sky-500", bg: "bg-sky-50 dark:bg-sky-950/50", span: "md:col-span-2" },
+  { icon: Layers, title: "FIFO Batch Tracking", desc: "Tahu persis batch mana harus dipakai duluan sebelum kedaluwarsa.", color: "text-rose-500", bg: "bg-rose-50 dark:bg-rose-950/50", span: "md:col-span-3" },
+  { icon: ClipboardCheck, title: "Quick Stock Take & Waste Audit", desc: "Opname kilat, hitung selisih otomatis dalam unit & Rupiah.", color: "text-violet-500", bg: "bg-violet-50 dark:bg-violet-950/50", span: "md:col-span-3" },
 ];
 
 const STEPS = [
@@ -112,15 +112,19 @@ export default function Landing() {
           <p className="text-xs uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400">Fitur Andalan</p>
           <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">Semua yang Dapur Anda Butuhkan</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-5 auto-rows-fr">
           {FEATURES.map((f, i) => (
             <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-              className={`group rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131C2E] p-6 hover:shadow-lg hover:-translate-y-1 transition-all ${f.span}`}>
-              <div className={`h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-800/60 grid place-items-center mb-4 ${f.color}`}>
+              data-testid={`feature-card-${i}`}
+              className={`group relative flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#131C2E] p-6 hover:shadow-xl hover:shadow-emerald-500/5 hover:-translate-y-1 transition-all ${f.span}`}>
+              <div className={`h-12 w-12 rounded-xl grid place-items-center mb-4 ${f.bg} ${f.color}`}>
                 <f.icon className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-bold">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{f.desc}</p>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                Pelajari <ArrowRight className="h-4 w-4 -translate-x-1 group-hover:translate-x-0 transition-transform" />
+              </div>
             </motion.div>
           ))}
         </div>
